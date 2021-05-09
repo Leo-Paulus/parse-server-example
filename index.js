@@ -39,8 +39,21 @@ if (!test) {
 }
 
 // Parse Server plays nicely with the rest of your web routes
-app.get('/', function (req, res) {
-  res.status(200).send('Hello chris! leo was here');
+app.get('/', function (req, resp) {
+  const https = require('https');
+  let dataString = '';
+  req = https.get("https://qm5a8zsg04.execute-api.us-east-1.amazonaws.com/default/HelloWorld", function(res) {
+    res.on('data', chunk => {
+      dataString += chunk;
+    });
+    res.on('end', () => {
+      resp.send(dataString)
+      console.log(dataString);
+    });
+  });
+  req.on('error', (e) => {
+    console.error(e);
+  });
 });
 
 // There will be a test page available on the /test path of your server url
